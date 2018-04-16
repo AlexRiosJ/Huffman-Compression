@@ -1,3 +1,4 @@
+package huffman;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -5,7 +6,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
-public class HuffmanCompression {
+public class HuffmanCompressor {
 
 	public static void main(String[] args) {
 		HashMap<Character, Integer> charFreq = charFreqFromFile(
