@@ -1,25 +1,30 @@
 package huffman;
+
 import java.io.*;
 import java.util.HashMap;
 
 public class HuffmanCompressor {
-	
+
 	private static HashMap<Character, Frame> codeTable;
 
 	public static void main(String[] args) {
-		HashMap<Character, Integer> charFreq = charFreqFromFile("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\Harry Potter.txt");
-		
+
+		String filePath = "C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\treeTest.txt";
+
+		HashMap<Character, Integer> charFreq = charFreqFromFile(filePath);
+
 		Tree tree = new Tree(charFreq);
 		tree.print();
-		
+
 		FileOutputStream fos;
 		FileInputStream fis;
 		ByteArrayOutputStream bos;
-		
+
 		codeTable = new HashMap<>();
-		
+
 		try {
-			fos = new FileOutputStream("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
+			fos = new FileOutputStream(
+					"C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
 			bos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
 			oos.writeObject(tree);
@@ -27,21 +32,45 @@ public class HuffmanCompressor {
 			oos.close();
 			System.out.println(fos.toString());
 			System.out.println(bos.size());
-			fis = new FileInputStream("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
+			fis = new FileInputStream(
+					"C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			Tree test = (Tree) ois.readObject();
 			ois.close();
 			System.out.println("\n\n");
 			test.print();
+
+			generateTable(tree);
+			System.out.println(codeTable.toString());
+
+			FileReader fr = new FileReader(filePath);
+			BufferedReader br = new BufferedReader(fr);
+			StringBuilder sb = new StringBuilder();
+
+			int aux;
+
+			try {
+				while ((aux = br.read()) != -1) {
+					System.out.print((char) aux);
+					sb.append((char) aux);
+				}
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			String stringToEncode = sb.toString();
+
+			try {
+				encode(fos, stringToEncode);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		generateTable(tree);
-		System.out.println(codeTable.toString());
-		
-		
-		
+
 	}
 
 	public static HashMap<Character, Integer> charFreqFromFile(String file) {
@@ -64,43 +93,87 @@ public class HuffmanCompressor {
 		}
 		return freqMap;
 	}
-	
-	public static void generateTable(Tree tree){
-		generateRecursive(tree.getRoot(), (int) 0x00, 0);
+
+	public static void generateTable(Tree tree) {
+		generateRecursive(tree.getRoot(), "");
 	}
-	
-	private static void generateRecursive(Tree.Node n, int mask, int length) {
-		if(n.left == null) {
-			codeTable.put(n.character, new Frame(mask, length));
+
+	private static void generateRecursive(Tree.Node n, String mask) {
+		if (n.left == null) {
+			codeTable.put(n.character, new Frame(mask));
 			return;
 		}
-		
-		generateRecursive(n.left, (int) ((mask << 1) + 0), length + 1);
-		generateRecursive(n.right, (int) ((mask << 1) + 1), length + 1);
+		generateRecursive(n.left, mask + "0");
+		generateRecursive(n.right, mask + "1");
 	}
-	
-	private static class Frame {
-		
-		private int mask = 0;
-		private int length = 0;
-		
-		public Frame(int mask, int length) {
-			this.mask = mask;
-			this.length = length;
+
+	private static void encode(FileOutputStream fos, String stringToEncode) throws IOException {
+		ByteArrayOutputStream baos;
+
+		byte[] buffer = new byte[1024];
+
+		char element;
+		String newByte;
+
+		int currentElementsAdded = 0;
+		int maskAux = 0;
+		byte byteToAdd = 0;
+
+		for (int i = 0; i < stringToEncode.length(); i++) {
+			element = stringToEncode.charAt(i);
+			newByte = codeTable.get(element).mask;
+			for (int j = 0; j < newByte.length(); j++) {
+				// Agregar elementos al buffer
+				if (maskAux < 8) {
+					byteToAdd += (newByte.charAt(j) - '0');
+					byteToAdd <<= 1;
+					maskAux++;
+				} else {
+					if (currentElementsAdded < 1024) {
+						buffer[currentElementsAdded] = byteToAdd;
+						currentElementsAdded++;
+						byteToAdd = 0;
+						byteToAdd += (newByte.charAt(j) - '0');
+						byteToAdd <<= 1;
+						maskAux = 1;
+					} else {
+						baos = new ByteArrayOutputStream(1024);
+						baos.write(buffer, 0, 1024);
+						baos.writeTo(fos);
+						buffer = new byte[1024];
+						currentElementsAdded = 0;
+						buffer[currentElementsAdded] = byteToAdd;
+						currentElementsAdded++;
+						byteToAdd = 0;
+						byteToAdd += (newByte.charAt(j) - '0');
+						byteToAdd <<= 1;
+						maskAux = 1;
+					}
+				}
+			}
 		}
-		
-		public int getMask() {
+
+		baos = new ByteArrayOutputStream(currentElementsAdded + 1);
+		baos.write(buffer, 0, 1024);
+		baos.writeTo(fos);
+	}
+
+	private static class Frame {
+
+		private String mask = "";
+
+		public Frame(String mask) {
+			this.mask = mask;
+		}
+
+		public String getMask() {
 			return this.mask;
 		}
-		
-		public int getLength() {
-			return this.length;
-		}
-		
+
 		public String toString() {
-			return (String.format("<%h, %d>\n", this.getMask(), this.getLength()));
+			return (String.format("<%s, %d>\n", this.getMask(), this.getMask().length()));
 		}
-		
+
 	}
 
 }
