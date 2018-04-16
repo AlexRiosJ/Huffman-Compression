@@ -1,12 +1,5 @@
 package huffman;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.HashMap;
 
 public class HuffmanCompressor {
@@ -19,19 +12,22 @@ public class HuffmanCompressor {
 		
 		FileOutputStream fos;
 		FileInputStream fis;
+		ByteArrayOutputStream bos;
 		
 		try {
 			fos = new FileOutputStream("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			bos = new ByteArrayOutputStream();
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
 			oos.writeObject(tree);
+			fos.write(bos.toByteArray());
 			oos.close();
 			System.out.println(fos.toString());
-			
+			System.out.println(bos.size());
 			fis = new FileInputStream("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			Tree test = (Tree) ois.readObject();
 			ois.close();
-			System.out.println("\n\n\n\n");
+			System.out.println("\n\n");
 			test.print();
 		} catch (Exception e) {
 			e.printStackTrace();
