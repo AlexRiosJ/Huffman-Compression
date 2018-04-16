@@ -3,6 +3,8 @@ import java.io.*;
 import java.util.HashMap;
 
 public class HuffmanCompressor {
+	
+	private static HashMap<Character, Frame> codeTable;
 
 	public static void main(String[] args) {
 		HashMap<Character, Integer> charFreq = charFreqFromFile("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\Harry Potter.txt");
@@ -13,6 +15,8 @@ public class HuffmanCompressor {
 		FileOutputStream fos;
 		FileInputStream fis;
 		ByteArrayOutputStream bos;
+		
+		codeTable = new HashMap<>();
 		
 		try {
 			fos = new FileOutputStream("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
@@ -32,6 +36,9 @@ public class HuffmanCompressor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		generateTable(tree);
+		System.out.println(codeTable.toString());
 		
 		
 		
@@ -57,13 +64,43 @@ public class HuffmanCompressor {
 		}
 		return freqMap;
 	}
-//	
-//	public static byte[] serializeTree(Tree tree) {
-//		byte[] frame = new byte[tree.getNullNodes() + tree.getLeafNodes() * 3];
-//		
-//		
-//		
-//		return frame;
-//	}
+	
+	public static void generateTable(Tree tree){
+		generateRecursive(tree.getRoot(), (int) 0x00, 0);
+	}
+	
+	private static void generateRecursive(Tree.Node n, int mask, int length) {
+		if(n.left == null) {
+			codeTable.put(n.character, new Frame(mask, length));
+			return;
+		}
+		
+		generateRecursive(n.left, (int) ((mask << 1) + 0), length + 1);
+		generateRecursive(n.right, (int) ((mask << 1) + 1), length + 1);
+	}
+	
+	private static class Frame {
+		
+		private int mask = 0;
+		private int length = 0;
+		
+		public Frame(int mask, int length) {
+			this.mask = mask;
+			this.length = length;
+		}
+		
+		public int getMask() {
+			return this.mask;
+		}
+		
+		public int getLength() {
+			return this.length;
+		}
+		
+		public String toString() {
+			return (String.format("<%h, %d>\n", this.getMask(), this.getLength()));
+		}
+		
+	}
 
 }

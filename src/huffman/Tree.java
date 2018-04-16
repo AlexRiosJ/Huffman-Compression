@@ -14,7 +14,7 @@ public class Tree implements Serializable {
 
 		for (int i = 0; i < Character.MAX_VALUE; i++) {
 			if (frequencyTable.containsKey((char) i)) 
-				queue.add(new Node((char) i, frequencyTable.get((char) i)));
+				queue.offer(new Node((char) i, frequencyTable.get((char) i)));
 		}
 		
 		Node nodeL;
@@ -29,10 +29,14 @@ public class Tree implements Serializable {
 			nodeJoiner.left = nodeL;
 			nodeJoiner.right = nodeR;
 			
-			queue.add(nodeJoiner);
+			queue.offer(nodeJoiner);
 		}
 		
 		this.root = queue.poll();
+	}
+	
+	public Node getRoot() {
+		return this.root;
 	}
 	
 	private void print(Node node, int spaces) {
