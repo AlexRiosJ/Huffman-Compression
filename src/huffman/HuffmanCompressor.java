@@ -6,40 +6,41 @@ import java.util.HashMap;
 public class HuffmanCompressor {
 
 	private static HashMap<Character, Frame> codeTable;
+	private static int treeBytesSize = 0;
+	
+	public static int getTreeBytesSize() {
+		return treeBytesSize;
+	}
 
-	public static void main(String[] args) {
+	public static void compress(String filePath) {
 
-		String filePath = "C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\treeTest.txt";
-
-		HashMap<Character, Integer> charFreq = charFreqFromFile(filePath);
-
-		Tree tree = new Tree(charFreq);
+		Tree tree = new Tree(charFreqFromFile(filePath));
 		tree.print();
 
 		FileOutputStream fos;
-		FileInputStream fis;
+//		FileInputStream fis;
 		ByteArrayOutputStream bos;
 
 		codeTable = new HashMap<>();
 
 		try {
-			fos = new FileOutputStream(
-					"C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
+			fos = new FileOutputStream("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
 			bos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
 			oos.writeObject(tree);
 			fos.write(bos.toByteArray());
 			oos.close();
-			System.out.println(fos.toString());
-			System.out.println(bos.size());
-			fis = new FileInputStream(
-					"C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
-			ObjectInputStream ois = new ObjectInputStream(fis);
-			Tree test = (Tree) ois.readObject();
-			ois.close();
-			System.out.println("\n\n");
-			test.print();
-
+			
+			// Tamaño del árbol guardado
+			treeBytesSize = bos.size();
+			System.out.println("Tree size (bytes): " + treeBytesSize);
+			
+//			fis = new FileInputStream("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
+//			ObjectInputStream ois = new ObjectInputStream(fis);
+//			Tree test = (Tree) ois.readObject();
+//			ois.close();
+//			test.print();
+			
 			generateTable(tree);
 			System.out.println(codeTable.toString());
 
@@ -51,7 +52,6 @@ public class HuffmanCompressor {
 
 			try {
 				while ((aux = br.read()) != -1) {
-					System.out.print((char) aux);
 					sb.append((char) aux);
 				}
 			} catch (IOException e) {
@@ -68,10 +68,9 @@ public class HuffmanCompressor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
-	public static HashMap<Character, Integer> charFreqFromFile(String file) {
+	private static HashMap<Character, Integer> charFreqFromFile(String file) {
 		HashMap<Character, Integer> freqMap = new HashMap<>();
 		try (FileReader fr = new FileReader(file); BufferedReader br = new BufferedReader(fr);) {
 			int aux;
@@ -92,7 +91,7 @@ public class HuffmanCompressor {
 		return freqMap;
 	}
 
-	public static void generateTable(Tree tree) {
+	private static void generateTable(Tree tree) {
 		generateRecursive(tree.getRoot(), "");
 	}
 
@@ -117,11 +116,9 @@ public class HuffmanCompressor {
 		int maskAux = 0;
 		byte byteToAdd = 0;
 		
-		System.out.println();
 		for (int i = 0; i < stringToEncode.length(); i++) {
 			element = stringToEncode.charAt(i);
 			newByte = codeTable.get(element).mask;
-			System.out.print(newByte);
 			for (int j = 0; j < newByte.length(); j++) {
 				// Agregar elementos al buffer
 				if (maskAux < 8) {
