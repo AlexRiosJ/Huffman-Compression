@@ -55,7 +55,6 @@ public class HuffmanCompressor {
 					sb.append((char) aux);
 				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
@@ -64,7 +63,6 @@ public class HuffmanCompressor {
 			try {
 				encode(fos, stringToEncode);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (Exception e) {
@@ -110,7 +108,7 @@ public class HuffmanCompressor {
 	private static void encode(FileOutputStream fos, String stringToEncode) throws IOException {
 		ByteArrayOutputStream baos;
 
-		byte[] buffer = new byte[1024];
+		byte[] buffer = new byte[2];
 
 		char element;
 		String newByte;
@@ -118,10 +116,12 @@ public class HuffmanCompressor {
 		int currentElementsAdded = 0;
 		int maskAux = 0;
 		byte byteToAdd = 0;
-
+		
+		System.out.println();
 		for (int i = 0; i < stringToEncode.length(); i++) {
 			element = stringToEncode.charAt(i);
 			newByte = codeTable.get(element).mask;
+			System.out.print(newByte);
 			for (int j = 0; j < newByte.length(); j++) {
 				// Agregar elementos al buffer
 				if (maskAux < 8) {
@@ -129,7 +129,7 @@ public class HuffmanCompressor {
 					byteToAdd <<= 1;
 					maskAux++;
 				} else {
-					if (currentElementsAdded < 1024) {
+					if (currentElementsAdded < 2) {
 						buffer[currentElementsAdded] = byteToAdd;
 						currentElementsAdded++;
 						byteToAdd = 0;
@@ -137,10 +137,10 @@ public class HuffmanCompressor {
 						byteToAdd <<= 1;
 						maskAux = 1;
 					} else {
-						baos = new ByteArrayOutputStream(1024);
-						baos.write(buffer, 0, 1024);
+						baos = new ByteArrayOutputStream(2);
+						baos.write(buffer, 0, 2);
 						baos.writeTo(fos);
-						buffer = new byte[1024];
+						buffer = new byte[2];
 						currentElementsAdded = 0;
 						buffer[currentElementsAdded] = byteToAdd;
 						currentElementsAdded++;
@@ -154,8 +154,9 @@ public class HuffmanCompressor {
 		}
 
 		baos = new ByteArrayOutputStream(currentElementsAdded + 1);
-		baos.write(buffer, 0, 1024);
+		baos.write(buffer, 0, 2);
 		baos.writeTo(fos);
+		
 	}
 
 	private static class Frame {
