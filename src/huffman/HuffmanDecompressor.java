@@ -12,6 +12,11 @@ public class HuffmanDecompressor {
 		try {
 
 			FileInputStream  is = new FileInputStream(filePath);
+			BufferedInputStream bis = new BufferedInputStream(is);
+
+			BufferedInputStreamHelper helper = new BufferedInputStreamHelper(bis);
+
+
 			ObjectInputStream ois;
 
 			byte[] treeBytes;
@@ -20,7 +25,7 @@ public class HuffmanDecompressor {
 			int dataToRead;
 
 			for(int i = 0; i < 4; i++){
-				dataToRead = is.read();
+				dataToRead = helper.read();
 				treeSize <<= 8;
 				treeSize += (dataToRead & 0x000000FF);
 			}
@@ -31,7 +36,7 @@ public class HuffmanDecompressor {
 			treeBytes = new byte[treeSize];
 
 			for(int i = 0; i < treeSize; i++){
-				dataToRead = is.read();
+				dataToRead = helper.read();
 				treeBytes[i] = (byte) (dataToRead & 0x000000FF);
 			}
 			
@@ -52,8 +57,9 @@ public class HuffmanDecompressor {
 			int charactersReaded = 0;
 			String outFilePath = filePath.substring(0, filePath.lastIndexOf('\\')) + "\\out.txt";
 			PrintWriter pr = new PrintWriter(outFilePath);
+			StringBuilder sb = new StringBuilder();
 
-			while(!ended && (dataToRead = is.read()) != -1){
+			while(!ended && (dataToRead = helper.read()) != -1){
 				// System.out.printf("%d, %H \n", dataToRead & 0x000000FF, dataToRead & 0x000000FF);
 				for(int i = 7; i >= 0; i--){
 					bit = (byte) ((dataToRead >> i) & 0x01);
@@ -61,7 +67,7 @@ public class HuffmanDecompressor {
 						charactersReaded++;
 						characterToWrite = n.character;
 						n = tree.getRoot();
-						pr.write(characterToWrite);
+						sb.append(characterToWrite);
 					}
 					if(charactersReaded == charactersToRead){
 						ended = true;
@@ -69,6 +75,8 @@ public class HuffmanDecompressor {
 					}
 				}
 			}
+
+			pr.write(sb.toString());
 
 			pr.close();
 			is.close();
@@ -89,10 +97,7 @@ public class HuffmanDecompressor {
 			n = n.right;
 		}
 
-		if(n.left == null){
-			return true;
-		}
-		return false;
+		return n.left == null;
 	}
 	
 }

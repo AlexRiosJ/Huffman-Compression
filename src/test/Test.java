@@ -9,7 +9,7 @@ public class Test {
 		
 		System.out.println("Test.java");
 		System.out.println("Compress");
-		HuffmanCompressor.compress("C:\\Desarrollo\\Source\\Repos\\HuffmanCompression\\src\\Harry Potter.txt");
+		HuffmanCompressor.compress("C:\\Desarrollo\\Source\\Repos\\HuffmanCompression\\src\\treeTest.txt");
 		System.out.println("Decompress");
 		HuffmanDecompressor.decompress("C:\\Desarrollo\\Source\\Repos\\HuffmanCompression\\src\\data.bin");
 		

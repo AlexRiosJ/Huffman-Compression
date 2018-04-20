@@ -108,13 +108,17 @@ public class HuffmanCompressor {
 	}
 
 	private static void encode(FileOutputStream fos, String stringToEncode) throws IOException {
-		
-		ByteArrayOutputStream baos;
-		byte[] buffer = new byte[1];
+
+		int len = stringToEncode.length();
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(len);
+
+		byte[] buffer = new byte[len + 1];
 		char element;
 		String newByte;
 		int maskAux = 0;
 		byte byteToAdd = 0;
+		int bytesWritten = 0;
 		
 		for (int i = 0; i < stringToEncode.length(); i++) {
 			element = stringToEncode.charAt(i);
@@ -129,11 +133,8 @@ public class HuffmanCompressor {
 					byteToAdd += (newByte.charAt(j) - '0');
 					maskAux++;
 				} else {
-					buffer = new byte[1];
-					buffer[0] = byteToAdd;
-					baos = new ByteArrayOutputStream(1);
-					baos.write(buffer, 0, 1);
-					baos.writeTo(fos);
+					buffer[bytesWritten] = byteToAdd;
+					bytesWritten++;
 					byteToAdd = 0;
 					byteToAdd += (newByte.charAt(j) - '0');
 					byteToAdd <<= 1;
@@ -144,10 +145,10 @@ public class HuffmanCompressor {
 
 		byteToAdd <<= 7 - maskAux;
 
-		buffer = new byte[1];
-		buffer[0] = byteToAdd;
-		baos = new ByteArrayOutputStream(1);
-		baos.write(buffer, 0, 1);
+		System.out.println(bytesWritten + " " + len);
+
+		buffer[bytesWritten] = byteToAdd;
+		baos.write(buffer, 0, bytesWritten + 1);
 		baos.writeTo(fos);
 		
 	}
