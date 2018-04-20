@@ -19,7 +19,6 @@ public class HuffmanDecompressor {
 
 			BufferedInputStreamHelper helper = new BufferedInputStreamHelper(bis);
 
-
 			ObjectInputStream ois;
 
 			byte[] treeBytes;
@@ -32,9 +31,6 @@ public class HuffmanDecompressor {
 				treeSize <<= 8;
 				treeSize += (dataToRead & 0x000000FF);
 			}
-
-			System.out.println(treeSize);
-
 
 			treeBytes = new byte[treeSize];
 
@@ -50,7 +46,6 @@ public class HuffmanDecompressor {
 			tree = (Tree) ois.readObject();
 			ois.close();
 			bais.close();
-			// tree.print();
 
 			byte bit;
 			char characterToWrite = ' ';
@@ -87,8 +82,6 @@ public class HuffmanDecompressor {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
 		
 	}
 

@@ -10,17 +10,18 @@ public class CompressTest {
 
 	public static void main(String[] args) {
 		
-		System.out.println("Test.java");
+		System.out.println("CompressTest.java");
 		
 		Frame f = new Frame();
-		FileDialog fd = new FileDialog(f, "Choose a file", FileDialog.LOAD);
+		FileDialog fd = new FileDialog(f, "Choose a text file to compress", FileDialog.LOAD);
         fd.setDirectory("C:\\");
         fd.setVisible(true);
         File file = fd.getFiles()[0];
 		f.dispose();
         
-		System.out.println("Compress");
+		System.out.println("Compressing. . .");
 		HuffmanCompressor.compress(file.getAbsolutePath());
+		System.out.println("Compress succeeded!");
 		
 	}
 

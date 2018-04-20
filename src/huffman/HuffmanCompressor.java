@@ -10,7 +10,7 @@ public class HuffmanCompressor {
 	public static void compress(String filePath) {
 
 		Tree tree = new Tree(charFreqFromFile(filePath));
-		tree.print();
+		// tree.print();
 
 		FileOutputStream fos;
 		ByteArrayOutputStream bos;
@@ -26,7 +26,7 @@ public class HuffmanCompressor {
 			oos.writeObject(tree);
 			
 			String binaryString = Integer.toBinaryString(bos.size());
-			System.out.println(binaryString);
+			// System.out.println(binaryString);
 			byte[] treeSize = new byte[4];
 			int index = 0;
 			int stringIndex = 0;
@@ -40,13 +40,13 @@ public class HuffmanCompressor {
 					index ++;
 				}
 			}
-			System.out.println(bos.size());
+			// System.out.println(bos.size());
 			fos.write(treeSize);
 			fos.write(bos.toByteArray());
 			oos.close();
 			
 			generateTable(tree);
-			System.out.println(codeTable.toString());
+			// System.out.println(codeTable.toString());
 
 			FileReader fr = new FileReader(filePath);
 			BufferedReader br = new BufferedReader(fr);
@@ -145,8 +145,6 @@ public class HuffmanCompressor {
 		}
 
 		byteToAdd <<= 7 - maskAux;
-
-		System.out.println(bytesWritten + " " + len);
 
 		buffer[bytesWritten] = byteToAdd;
 		baos.write(buffer, 0, bytesWritten + 1);
