@@ -9,38 +9,44 @@ public class HuffmanDecompressor {
 	public static void decompress(String filePath) {
 		
 		try {
-			
-			InputStream is = new FileInputStream(filePath);
+
+			FileInputStream  is = new FileInputStream(filePath);
 			ObjectInputStream ois;
-		
+
 			byte[] treeBytes;
-			
-			byte[] cbuf = new byte[4];
+
 			int treeSize = 0;
-			
-			is.read(cbuf, 0, 4);
-			treeSize += (cbuf[0] & 0x000000FF);
-			treeSize <<= 8;
-			treeSize += (cbuf[1] & 0x000000FF);
-			treeSize <<= 8;
-			treeSize += (cbuf[2] & 0x000000FF);
-			treeSize <<= 8;
-			treeSize += (cbuf[3] & 0x000000FF);
-			
+			int dataToRead;
+
+			for(int i = 0; i < 4; i++){
+				dataToRead = is.read();
+				treeSize <<= 8;
+				treeSize += (dataToRead & 0x000000FF);
+			}
+
 			System.out.println(treeSize);
+
+
+			treeBytes = new byte[treeSize];
+
+			for(int i = 0; i < treeSize; i++){
+				dataToRead = is.read();
+				treeBytes[i] = (byte) (dataToRead & 0x000000FF);
+			}
 			
-			treeBytes = new byte[treeSize + 4];
-			
-			is.read(treeBytes, 4, treeSize);
-			
-			ByteArrayInputStream bais = new ByteArrayInputStream(treeBytes, 4, treeBytes.length);
+			ByteArrayInputStream bais = new ByteArrayInputStream(treeBytes);
 			
 			ois = new ObjectInputStream(bais);
 			
 			tree = (Tree) ois.readObject();
 			ois.close();
-			tree.print();
-			is.close();
+			bais.close();
+			// tree.print();
+
+			while((dataToRead = is.read()) != -1){
+				System.out.printf("%d, %H \n", dataToRead & 0x000000FF, dataToRead & 0x000000FF);
+			}
+
 			
 		} catch (Exception e) {
 			e.printStackTrace();
