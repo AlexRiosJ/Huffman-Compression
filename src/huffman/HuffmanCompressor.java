@@ -129,7 +129,6 @@ public class HuffmanCompressor {
 					byteToAdd += (newByte.charAt(j) - '0');
 					maskAux++;
 				} else {
-					System.out.printf("%h ", byteToAdd & 0x000000ff);
 					buffer = new byte[1];
 					buffer[0] = byteToAdd;
 					baos = new ByteArrayOutputStream(1);

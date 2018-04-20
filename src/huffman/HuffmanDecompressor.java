@@ -5,6 +5,7 @@ import java.io.*;
 public class HuffmanDecompressor {
 	
 	static Tree tree;
+	static Tree.Node n;
 	
 	public static void decompress(String filePath) {
 		
@@ -43,9 +44,33 @@ public class HuffmanDecompressor {
 			bais.close();
 			// tree.print();
 
-			while((dataToRead = is.read()) != -1){
-				System.out.printf("%d, %H \n", dataToRead & 0x000000FF, dataToRead & 0x000000FF);
+			byte bit;
+			char characterToWrite = ' ';
+			boolean ended = false;
+			n = tree.getRoot();
+			int charactersToRead = tree.getRoot().frequency;
+			int charactersReaded = 0;
+			String outFilePath = filePath.substring(0, filePath.lastIndexOf('\\')) + "\\out.txt";
+			PrintWriter pr = new PrintWriter(outFilePath);
+
+			while(!ended && (dataToRead = is.read()) != -1){
+				// System.out.printf("%d, %H \n", dataToRead & 0x000000FF, dataToRead & 0x000000FF);
+				for(int i = 7; i >= 0; i--){
+					bit = (byte) ((dataToRead >> i) & 0x01);
+					if(searchCharacter(bit)){
+						charactersReaded++;
+						characterToWrite = n.character;
+						n = tree.getRoot();
+						pr.write(characterToWrite);
+					}
+					if(charactersReaded == charactersToRead){
+						ended = true;
+						break;
+					}
+				}
 			}
+
+			pr.close();
 
 			
 		} catch (Exception e) {
@@ -54,6 +79,19 @@ public class HuffmanDecompressor {
 		
 		
 		
+	}
+
+	private static boolean searchCharacter(byte bit){
+		if(bit == 0){
+			n = n.left;
+		}else{
+			n = n.right;
+		}
+
+		if(n.left == null){
+			return true;
+		}
+		return false;
 	}
 	
 }
