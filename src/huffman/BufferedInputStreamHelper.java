@@ -23,7 +23,6 @@ public class BufferedInputStreamHelper {
             cursor = 0;
         }
 
-
         ret = buffer[cursor] & 0x000000FF;
         cursor++;
         return ret;
