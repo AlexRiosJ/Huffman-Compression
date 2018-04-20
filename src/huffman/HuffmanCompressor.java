@@ -110,10 +110,9 @@ public class HuffmanCompressor {
 	private static void encode(FileOutputStream fos, String stringToEncode) throws IOException {
 		
 		ByteArrayOutputStream baos;
-		byte[] buffer = new byte[2];
+		byte[] buffer = new byte[1];
 		char element;
 		String newByte;
-		int currentElementsAdded = 0;
 		int maskAux = 0;
 		byte byteToAdd = 0;
 		
@@ -122,38 +121,34 @@ public class HuffmanCompressor {
 			newByte = codeTable.get(element).mask;
 			for (int j = 0; j < newByte.length(); j++) {
 				// Agregar elementos al buffer
-				if (maskAux < 8) {
+				if (maskAux < 7) {
 					byteToAdd += (newByte.charAt(j) - '0');
 					byteToAdd <<= 1;
 					maskAux++;
+				}else if(maskAux == 7){
+					byteToAdd += (newByte.charAt(j) - '0');
+					maskAux++;
 				} else {
-					if (currentElementsAdded < 2) {
-						System.out.printf("%h \n", byteToAdd & 0x000000ff);
-						buffer[currentElementsAdded] = byteToAdd;
-						currentElementsAdded++;
-						byteToAdd = 0;
-						byteToAdd += (newByte.charAt(j) - '0');
-						byteToAdd <<= 1;
-						maskAux = 1;
-					} else {
-						baos = new ByteArrayOutputStream(2);
-						baos.write(buffer, 0, 2);
-						baos.writeTo(fos);
-						buffer = new byte[2];
-						currentElementsAdded = 0;
-						buffer[currentElementsAdded] = byteToAdd;
-						currentElementsAdded++;
-						byteToAdd = 0;
-						byteToAdd += (newByte.charAt(j) - '0');
-						byteToAdd <<= 1;
-						maskAux = 1;
-					}
+					System.out.printf("%h ", byteToAdd & 0x000000ff);
+					buffer = new byte[1];
+					buffer[0] = byteToAdd;
+					baos = new ByteArrayOutputStream(1);
+					baos.write(buffer, 0, 1);
+					baos.writeTo(fos);
+					byteToAdd = 0;
+					byteToAdd += (newByte.charAt(j) - '0');
+					byteToAdd <<= 1;
+					maskAux = 1;
 				}
 			}
 		}
 
-		baos = new ByteArrayOutputStream(currentElementsAdded + 1);
-		baos.write(buffer, 0, 2);
+		byteToAdd <<= 7 - maskAux;
+
+		buffer = new byte[1];
+		buffer[0] = byteToAdd;
+		baos = new ByteArrayOutputStream(1);
+		baos.write(buffer, 0, 1);
 		baos.writeTo(fos);
 		
 	}
