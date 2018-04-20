@@ -11,6 +11,9 @@ public class HuffmanDecompressor {
 		
 		try {
 
+			String filename = filePath.substring( filePath.lastIndexOf('\\') + 1 , filePath.lastIndexOf('.'));
+			String outputFilePath = filePath.substring(0, filePath.lastIndexOf('\\') + 1) + filename + "d.txt";
+
 			FileInputStream  is = new FileInputStream(filePath);
 			BufferedInputStream bis = new BufferedInputStream(is);
 
@@ -55,8 +58,7 @@ public class HuffmanDecompressor {
 			n = tree.getRoot();
 			int charactersToRead = tree.getRoot().frequency;
 			int charactersReaded = 0;
-			String outFilePath = filePath.substring(0, filePath.lastIndexOf('\\')) + "\\out.txt";
-			PrintWriter pr = new PrintWriter(outFilePath);
+			PrintWriter pr = new PrintWriter(outputFilePath);
 			StringBuilder sb = new StringBuilder();
 
 			while(!ended && (dataToRead = helper.read()) != -1){

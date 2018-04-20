@@ -18,7 +18,8 @@ public class HuffmanCompressor {
 		codeTable = new HashMap<>();
 
 		try {
-			String outputFilePath = filePath.substring(0, filePath.lastIndexOf('\\')) + "\\data.bin";
+			String filename = filePath.substring( filePath.lastIndexOf('\\') + 1 , filePath.lastIndexOf('.'));
+			String outputFilePath = filePath.substring(0, filePath.lastIndexOf('\\') + 1) + filename + "c.bin";
 			fos = new FileOutputStream(outputFilePath);
 			bos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
