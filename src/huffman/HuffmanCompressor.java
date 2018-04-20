@@ -18,7 +18,8 @@ public class HuffmanCompressor {
 		codeTable = new HashMap<>();
 
 		try {
-			fos = new FileOutputStream("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
+			String outputFilePath = filePath.substring(0, filePath.lastIndexOf('\\')) + "\\data.bin";
+			fos = new FileOutputStream(outputFilePath);
 			bos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
 			oos.writeObject(tree);
@@ -127,6 +128,7 @@ public class HuffmanCompressor {
 					maskAux++;
 				} else {
 					if (currentElementsAdded < 2) {
+						System.out.printf("%h \n", byteToAdd & 0x000000ff);
 						buffer[currentElementsAdded] = byteToAdd;
 						currentElementsAdded++;
 						byteToAdd = 0;
