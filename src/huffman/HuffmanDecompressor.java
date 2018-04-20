@@ -71,6 +71,7 @@ public class HuffmanDecompressor {
 			}
 
 			pr.close();
+			is.close();
 
 			
 		} catch (Exception e) {
