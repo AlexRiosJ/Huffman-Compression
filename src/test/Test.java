@@ -12,6 +12,7 @@ public class Test {
 		HuffmanCompressor.compress("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\Harry Potter.txt");
 		System.out.println("Decompress");
 		HuffmanDecompressor.decompress("C:\\Users\\Alejandro\\Documents\\GitHub\\Repositories\\HuffmanCompression\\src\\data.bin");
+		
 	}
 
 }

@@ -1,6 +1,7 @@
 package huffman;
 
 import java.io.*;
+import java.util.Arrays;
 
 public class HuffmanDecompressor {
 	
@@ -40,13 +41,24 @@ public class HuffmanDecompressor {
 			tree = (Tree) ois.readObject();
 			ois.close();
 			tree.print();
-			is.close();
 			
+			int fileLength = (int) new File(filePath).length();
+			byte[] data = new byte[fileLength - (treeSize + 4)];
+			byte[] fullData = new byte[fileLength];
+			is.read(fullData, 0 , fileLength);
+			is.close();
+			for(byte b : fullData) {
+				b = (byte) (b & 0x000000FF);
+			}			
+			for(int i = fileLength - 1; i >= fileLength - data.length; i--)
+				data[i - (treeSize + 4)] = fullData[i];
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		
+			
+	}
+	
+	private static void decode(byte[] data) {
 		
 	}
 	
