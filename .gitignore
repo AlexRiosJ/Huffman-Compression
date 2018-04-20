@@ -53,3 +53,4 @@ local.properties
 HuffmanCompression.iml
 
 .idea/
+src/out.txt
