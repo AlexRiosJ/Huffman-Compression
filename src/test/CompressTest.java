@@ -16,12 +16,17 @@ public class CompressTest {
 		FileDialog fd = new FileDialog(f, "Choose a text file to compress", FileDialog.LOAD);
         fd.setDirectory("C:\\");
         fd.setVisible(true);
-        File file = fd.getFiles()[0];
-		f.dispose();
+        try {
+        	File file = fd.getFiles()[0];
+            
+    		System.out.println("Compressing. . .");
+    		HuffmanCompressor.compress(file.getAbsolutePath());
+    		System.out.println("Compress succeeded!");
+        } catch (IndexOutOfBoundsException e) {
+        	System.out.println("No file selected.\nExiting. . .");
+        }
         
-		System.out.println("Compressing. . .");
-		HuffmanCompressor.compress(file.getAbsolutePath());
-		System.out.println("Compress succeeded!");
+        f.dispose();
 		
 	}
 

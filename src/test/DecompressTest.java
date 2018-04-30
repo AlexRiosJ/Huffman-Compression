@@ -16,12 +16,18 @@ public class DecompressTest {
 		FileDialog fd = new FileDialog(f, "Choose a binary file to decompress", FileDialog.LOAD);
         fd.setDirectory("C:\\");
         fd.setVisible(true);
-        File file = fd.getFiles()[0];
-		f.dispose();
+        try {
+        	File file = fd.getFiles()[0];
+            
+    		System.out.println("Decompressing. . .");
+    		HuffmanDecompressor.decompress(file.getAbsolutePath());
+    		System.out.println("Decompress succeeded!");
+        } catch (IndexOutOfBoundsException e) {
+        	System.out.println("No file selected.\nExiting. . .");
+        }
         
-		System.out.println("Decompressing. . .");
-		HuffmanDecompressor.decompress(file.getAbsolutePath());
-		System.out.println("Decompress succeeded!");
+        f.dispose();
+        
 	}
 
 }
