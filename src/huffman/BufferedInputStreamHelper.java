@@ -10,7 +10,7 @@ public class BufferedInputStreamHelper {
     private byte[] buffer;
     private int bytesRead;
 
-    public BufferedInputStreamHelper(BufferedInputStream bufferedInputStream){
+    public BufferedInputStreamHelper(BufferedInputStream bufferedInputStream) {
         this.bufferedInputStream = bufferedInputStream;
         cursor = 1024;
         bytesRead = 0;
@@ -19,9 +19,10 @@ public class BufferedInputStreamHelper {
 
     public int read() throws IOException {
         int ret = 0;
-        if(cursor >= bytesRead) {
+        if (cursor >= bytesRead) {
             ret = this.bufferedInputStream.read(buffer);
-            if (ret == -1) return -1;
+            if (ret == -1)
+                return -1;
             bytesRead = ret;
             cursor = 0;
         }
